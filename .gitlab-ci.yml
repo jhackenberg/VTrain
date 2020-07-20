@@ -1,0 +1,58 @@
+image: golang:latest
+
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
+variables:
+  REPO_NAME: gitlab.com/helmholtzschule/go-libs/api/api
+  BINARY_NAME: vtrain
+
+stages:
+  - format
+  - test
+  - build
+
+cache:
+  paths:
+    - $GOPATH/pkg/mod/
+
+.go_job:
+  before_script:
+    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME
+
+format:
+  stage: format
+  extends: .go_job
+  script:
+    - go fmt $(go list ./... | grep -v /vendor/)
+
+test:
+  stage: test
+  extends: .go_job
+  script:
+    - go test -race $(go list ./... | grep -v /vendor/)
+
+vet:
+  stage: test
+  extends: .go_job
+  script:
+    - go vet $(go list ./... | grep -v /vendor/)
+
+code_quality:
+  stage: test
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+build:
+  stage: build
+  extends: .go_job
+  needs:
+    - test
+    - vet
+  script:
+    - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/$BINARY_NAME
+  artifacts:
+    paths:
+      - $BINARY_NAME
