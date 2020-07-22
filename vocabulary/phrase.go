@@ -1,5 +1,5 @@
 package vocabulary
 
 type Phrase struct {
-	Phrase string
+	Phrase string `yaml:"phrase"`
 }
