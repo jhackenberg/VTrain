@@ -1,8 +1,6 @@
 package session
 
 import (
-	"fmt"
-
 	"gitlab.com/jhackenberg/vtrain/vocabulary"
 )
 
@@ -16,7 +14,9 @@ func (cmd *newCmd) Run() error {
 		return err
 	}
 
-	fmt.Println(list)
+	session := NewSession(list)
+	for session.Run() {
+	}
 
 	return nil
 }
