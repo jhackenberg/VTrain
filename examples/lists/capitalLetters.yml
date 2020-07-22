@@ -1,0 +1,16 @@
+- a:
+    phrase: a
+  b:
+    phrase: A
+- a:
+    phrase: b
+  b:
+    phrase: B
+- a:
+    phrase: c
+  b:
+    phrase: C
+- a:
+    phrase: d
+  b:
+    phrase: D
